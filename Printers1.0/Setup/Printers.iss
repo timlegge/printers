@@ -10,29 +10,35 @@ AppSupportURL=http://printers.sourceforge.net/
 AppUpdatesURL=http://printers.sourceforge.net/
 DefaultDirName={pf}\Printers
 DefaultGroupName=Printers
-AllowNoIcons=yes
-AlwaysCreateUninstallIcon=yes
+AllowNoIcons=true
+AlwaysCreateUninstallIcon=true
 LicenseFile=C:\Printers\Printers1.0\gpl.txt
+MinVersion=4.0.950,4.0.1381sp4
+AppCopyright=Timothy Legge
+OutputDir=C:\Printers\Printers1.0\Setup\Output
+AppVersion=1.1
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
 
 [Files]
-Source: "C:\Printers\Printers1.0\Release\Printers.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "C:\Printers\Printers1.0\gpl.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: C:\Printers\Printers1.0\Release\Printers.exe; DestDir: {app}; CopyMode: alwaysoverwrite
+Source: C:\Printers\Printers1.0\gpl.txt; DestDir: {app}; CopyMode: alwaysoverwrite
 
 [INI]
-Filename: "{app}\Printers.url"; Section: "InternetShortcut"; Key: "URL"; String: "http://printers.sourceforge.net/"
+Filename: {app}\Printers.url; Section: InternetShortcut; Key: URL; String: http://printers.sourceforge.net/
 
 [Registry]
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; Flags: uninsdeletevalue; ValueType: string; ValueName: "Printers"; ValueData: "{app}\Printers.exe"
+Root: HKCU; Subkey: Software\Microsoft\Windows\CurrentVersion\Run; Flags: uninsdeletevalue; ValueType: string; ValueName: Printers; ValueData: {app}\Printers.exe
 
 [Icons]
-Name: "{group}\Printers"; Filename: "{app}\Printers.exe"
-Name: "{group}\Printers on the Web"; Filename: "{app}\Printers.url"
+Name: {group}\Printers; Filename: {app}\Printers.exe; IconIndex: 0
+Name: {group}\Printers on the Web; Filename: {app}\Printers.url; IconIndex: 0
 
 [Run]
-Filename: "{app}\Printers.exe"; Description: "Launch Printers"; Flags: nowait postinstall skipifsilent
+Filename: {app}\Printers.exe; Description: Launch Printers; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
-Type: files; Name: "{app}\Printers.url"
+Type: files; Name: {app}\Printers.url
 
+[Messages]
+UninstallAppRunningError=

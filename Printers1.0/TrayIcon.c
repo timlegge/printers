@@ -456,7 +456,9 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 								bFileCreated = FALSE; 
 						}
 #endif
-						free(tmpFileName);
+						if(bFileCreated){ 
+							free(tmpFileName);
+						}
 						EndDialog(hDlg, TRUE);
 					break;
 					
