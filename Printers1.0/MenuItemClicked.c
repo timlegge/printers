@@ -42,7 +42,7 @@ $Date$
 
 extern int iNbrMenuItemstoAdd;
 extern short osver;
-extern char DefaultPrinter[255];
+extern TCHAR DefaultPrinter[MAX_PATH];
 extern short osver;
 
 

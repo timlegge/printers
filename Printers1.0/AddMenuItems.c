@@ -34,6 +34,8 @@ $Author$
 $Date$
 
 */
+//#define _UNICODE
+
 #include <windows.h>
 #include <stdio.h>
 #include <tchar.h>
@@ -41,7 +43,7 @@ $Date$
 
 extern int iNbrMenuItemstoAdd;
 extern short osver;
-extern TCHAR DefaultPrinter[255];
+extern TCHAR DefaultPrinter[MAX_PATH];
 
 int AddMenuItems(HMENU hMenu, int x, LPTSTR tmpPrinter);
 
@@ -55,7 +57,7 @@ int AddItemsToMenu(HMENU hMenu)
 	BOOL bErr;
 	int numPrinters;
 	LPTSTR tmpPrinter;
-	TCHAR DefaultPrinter[255];
+	TCHAR DefaultPrinter[MAX_PATH];
 	int  x =0;	/*	Looper used for Adding 
 				and deleting Menu Items */
 	

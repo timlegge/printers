@@ -49,7 +49,7 @@ $Date$
 #include "include\TrayIcon.h"
 
 
-#define USECLIPBOARD
+//#define USECLIPBOARD
 
 LRESULT CALLBACK WindowFunc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -434,7 +434,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HWND hWnd;
 	HWND hChildWnd;
 #else
-	WIN32_FIND_DATA lpFindFileData;
+//	WIN32_FIND_DATA lpFindFileData;
 	HANDLE hFile;
 	DWORD lpNumberOfBytesWritten;
 #endif
@@ -452,16 +452,8 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #else
 
 						if(bFileCreated){ 
-							HANDLE hFile;
-							hFile = FindFirstFile(tmpFileName,  // pointer to name of file to search for 
-								&lpFindFileData  // pointer to returned information 
-								); 
- 
-							if(hFile){
-								CloseHandle (hFile);
-								if(DeleteFile(tmpFileName));
-									bFileCreated = FALSE; 
-							}
+							if(DeleteFile(tmpFileName));
+								bFileCreated = FALSE; 
 						}
 #endif
 						free(tmpFileName);
