@@ -351,8 +351,11 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch(GET_WM_COMMAND_ID(wParam, lParam))
 		{
 		case IDOK:
-			if(hInst)
+			fDetails=fopen(tmpFileName, "w");
+			if(fDetails){
+				fclose(fDetails);
 				DeleteFile(tmpFileName);
+			}
 			EndDialog(hDlg, TRUE);
 			break;
 			
