@@ -340,10 +340,12 @@ int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt)
 
 BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	#define maxbuf 880
 	char static tmpFileName[_MAX_PATH];
 	char buffer[_MAX_PATH];
 	HINSTANCE hInst=0;
-	char cDetails[870]="";
+	int ibuflen;
+	char cDetails[maxbuf]="";
 	FILE *fDetails;
 	int count=0;
 	
@@ -366,7 +368,8 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 			
 		case IDC_DETAILS:
-			LoadString(ghThisInst, IDS_DETAILS, cDetails, 870);
+			
+			ibuflen = LoadString(ghThisInst, IDS_DETAILS, cDetails, maxbuf);
 			
 			/* Display the Readme */
 			_getcwd( buffer, _MAX_PATH ); // Get Current Directory
@@ -381,7 +384,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 			
 			fDetails=fopen(tmpFileName, "w");
-			fwrite( cDetails, sizeof( char ), 870, fDetails );
+			fwrite( cDetails, sizeof( char ), ibuflen, fDetails );
 			fclose(fDetails);
 			
 			// Open the file
