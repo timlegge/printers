@@ -178,7 +178,7 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 	int result;  // Result of calling ModifyINI function
 	char pszTip[28] = "Change Default Printer";// Tooltip displayed over Icon
 	static UINT s_uTaskbarRestart;
-	
+	char DefaultPrinter[255];
 	//LPCTSTR tempchar;
 	
 	switch (message)
@@ -220,7 +220,6 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 		}
 		break;
 		
-		
 		/*	Message received when the
 		window is created */
 		case WM_CREATE:
@@ -249,8 +248,28 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 				result = ShowMenu(hwnd, hMenu, point);
 				return 0;
 			}
+							
 			return 0;
+		
+		case WM_WININICHANGE:
+			/* Get the current Default Printer 
+			to update the Tool Tip */
+
+			/* Get the name of the Default Printer */
+			GetProfileString("windows", "device",",,,", DefaultPrinter, sizeof(DefaultPrinter));
+ 			sprintf(DefaultPrinter, "%s", strtok(DefaultPrinter, ","));
+
+			/* Display the default printer in the tooltip */
+				if (DefaultPrinter)
+					lstrcpyn(tnd.szTip, DefaultPrinter, sizeof(tnd.szTip));
+				else 
+					lstrcpyn(tnd.szTip, pszTip, sizeof(tnd.szTip));
+	
+				Shell_NotifyIcon(NIM_MODIFY, &tnd); 
+
+
 			default:
+
 				if(message == s_uTaskbarRestart)
 				{
 					//MessageBox(HWND_DESKTOP, "Explorer crashed redraw icon", "Printers", MB_OK);
@@ -489,14 +508,23 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip) 
 { 
     BOOL res; 
-		
+	char DefaultPrinter[255];
+	
     tnd.cbSize = sizeof(NOTIFYICONDATA); 
     tnd.hWnd = hwnd; 
     tnd.uID = uID; 
     tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP; 
     tnd.uCallbackMessage = MYWM_NOTIFYICON; 
     tnd.hIcon = hIcon; 
-    if (lpszTip) 
+
+	/* Get the name of the Default Printer */
+	GetProfileString("windows", "device",",,,", DefaultPrinter, sizeof(DefaultPrinter));
+ 	sprintf(DefaultPrinter, "%s", strtok(DefaultPrinter, ","));
+
+	/* Display the default printer in the tooltip */
+	if (DefaultPrinter)
+		lstrcpyn(tnd.szTip, DefaultPrinter, sizeof(tnd.szTip));
+	else if(lpszTip) 
         lstrcpyn(tnd.szTip, lpszTip, sizeof(tnd.szTip)); 
     else 
         tnd.szTip[0] = '\0'; 
