@@ -58,14 +58,14 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,99,116,50,14
     ICON            ID_MYICON,IDC_STATIC0,7,7,20,20
     LTEXT           "Printers - Default Printer Changer\n\nCopyright (C) 1998 - 2002 Timothy Legge",
-                    IDC_STATIC1,32,7,139,29
+                    IDC_STATIC1,32,7,139,27
     PUSHBUTTON      "Details",IDC_DETAILS,34,116,50,14
     LTEXT           "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
                     IDC_STATIC2,32,61,141,49
-    CONTROL         "http://printers.sourceforge.net",ID_WEB,"HoverText",0x0,
-                    32,45,123,10
-    CONTROL         "timlegge@users.sourceforge.net",ID_WEB2,"HoverText",0x0,
-                    32,34,125,10
+    CONTROL         "timlegge@users.sourceforge.net",ID_EMAIL,"HoverText",
+                    0x0,32,35,125,11
+    CONTROL         "http://printers.sourceforge.net",IDC_WEB,"HoverText",
+                    WS_TABSTOP,32,47,125,11
 END
 
 

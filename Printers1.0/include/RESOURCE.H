@@ -6,6 +6,7 @@
 #define IDS_DETAILS                     1000
 #define IDC_WEB                         1003
 #define ID_WEB                          1005
+#define ID_EMAIL                        1005
 #define ID_WEB2                         1006
 #define ID_MYICON                       1500
 #define IDD_DIALOG                      2500
@@ -25,7 +26,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40005
-#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_CONTROL_VALUE         1008
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

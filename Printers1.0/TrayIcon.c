@@ -44,7 +44,7 @@ $Date$
 #include <string.h>
 #include <direct.h>		/* Get the working Directory */
 #include <tchar.h>
-
+//#include <commctrl.h>		/* Not Needed */
 #include "include\resource.h"
 #include "include\TrayIcon.h"
 
@@ -100,8 +100,7 @@ int WINAPI WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, LPSTR lpszArgs, int
 	
 	MSG msg;					// Message to be used in main message loop
 	HWND hwnd;					// Handle to the Window
-	WNDCLASS wcl;				// Structure for the Window class information
-	WNDCLASSEX wc;				// Structure used for the Hover Text Window Class
+	WNDCLASSEX wcl;				// Structure for the Window class information
 	OSVERSIONINFO		osvinfo;// Get the OS version for NT compatability
 	ghThisInst = hThisInst;		// Set global value for this instance of the Application
 	
@@ -127,22 +126,25 @@ int WINAPI WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, LPSTR lpszArgs, int
 		return 0;
 	}
 	
-	
+
+//	InitCommonControls();  /* Not needed? */
 	
 	/*	Set the information for the
 	Window Class Structure */
-	wcl.hInstance = hThisInst;			// Instance Handle
-	wcl.lpszClassName = szClassName;	// Class Name
+	wcl.cbSize   = sizeof(WNDCLASSEX);
+	wcl.style = CS_HREDRAW | CS_VREDRAW ;
 	wcl.lpfnWndProc = WindowFunc;		// Name of Call Back Window Function
-	wcl.style = 0;
-	wcl.hIcon = NULL;					// No Icon for the Window
-	wcl.hCursor = NULL;					// No Cursor for the Window
-	wcl.lpszMenuName = NULL;			// No Main Menu
 	wcl.cbClsExtra = 0;					
 	wcl.cbWndExtra = 0;
-	wcl.hbrBackground = NULL;
-	
-	if(!RegisterClass (&wcl)) return 0;	// Register Window Class
+	wcl.hInstance = hThisInst;			// Instance Handle
+	wcl.hIcon = NULL;					// No Icon for the Window
+	wcl.hCursor = NULL;					// No Cursor for the Window
+	wcl.hbrBackground = NULL;	
+	wcl.lpszMenuName = NULL;			// No Main Menu	
+	wcl.lpszClassName = szClassName;	// Class Name
+	wcl.hIconSm = NULL;
+
+	if(!RegisterClassEx (&wcl)) return 0;	// Register Window Class
 	
 /*-----------------------------
 HoverText based on code from 
@@ -150,23 +152,23 @@ Philip Jones (found via google)
 used with permission 
 -------------------------------*/
 	// create custom window class for hover buttons in dialog
-	wc.cbSize   = sizeof(WNDCLASSEX);
-	wc.style         = CS_HREDRAW | CS_VREDRAW ;
-	wc.lpfnWndProc   = HoverTextWndProc ;
-	wc.cbClsExtra    = wc.cbWndExtra = 0 ;
-	wc.hInstance     = hThisInst;
-	wc.hIcon         = NULL ;
-	wc.hCursor       = LoadCursor(hThisInst, IDC_HAND); 
-	if(wc.hCursor == NULL)
-		wc.hCursor   = LoadImage (hThisInst, MAKEINTRESOURCE(IDC_LINK),IMAGE_CURSOR, 		   0, 0, LR_DEFAULTSIZE); 
-	
-	
-	wc.hbrBackground = (HBRUSH) GetSysColorBrush(COLOR_BTNFACE) ;
-	wc.lpszMenuName  = NULL ;
-	wc.lpszClassName = TEXT ("HoverText") ;
-	wc.hIcon   = NULL;
+	wcl.cbSize   = sizeof(WNDCLASSEX);
+	wcl.style         = CS_HREDRAW | CS_VREDRAW ;
+	wcl.lpfnWndProc   = HoverTextWndProc ;
+	wcl.cbClsExtra    = wcl.cbWndExtra = 0 ;
+	wcl.hInstance     = hThisInst;
+	wcl.hIcon         = NULL ;
+	wcl.hCursor       = LoadCursor(hThisInst, IDC_HAND); 
+	if(wcl.hCursor == NULL)
+		wcl.hCursor   = LoadImage (hThisInst, MAKEINTRESOURCE(IDC_LINK),IMAGE_CURSOR, 		   0, 0, LR_DEFAULTSIZE); 
+	wcl.hbrBackground = (HBRUSH) GetSysColorBrush(COLOR_BTNFACE) ;
+	wcl.lpszMenuName  = NULL ;
+	wcl.lpszClassName = TEXT ("HoverText") ;
+	wcl.hIconSm   = NULL;
 
-	RegisterClassEx (&wc) ;
+	if(!RegisterClassEx (&wcl)) return 0;
+
+
 /*-----------------------------
 End HoverText based on code from 
 Philip Jones (found via google)
@@ -235,7 +237,8 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			return 0;
 			
 		case IDM_ABOUT:
-			DialogBox(ghThisInst, MAKEINTRESOURCE(IDD_DIALOG), NULL, AboutProc);
+
+			DialogBox(ghThisInst, MAKEINTRESOURCE(IDD_DIALOG), hwnd, AboutProc);
 			return 0;
 			
 		default:
@@ -408,6 +411,8 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	LPTSTR lpWPClassName = "RichEdit20A";
 	HWND hWnd;
 	HWND hChildWnd;
+	//HWND hweb;
+
 #else
 	FILE *fDetails;
 #endif
@@ -529,7 +534,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	}
 
-	return 0;
+	return FALSE;
 	
 }
 
@@ -578,8 +583,9 @@ used with permission
 -------------------------------*/
 LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	TCHAR       szText[85];
+	TCHAR  szText[95];
 	TCHAR  szMailTo[95];
+	TCHAR  szSubject[95];
 	TCHAR  szWeb[95];
 	TCHAR  szFTP[95];
 	HDC         hdc ;
@@ -589,6 +595,7 @@ LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARA
 	HINSTANCE hInst;
 
 
+
 	TRACKMOUSEEVENT tme;
 	static BOOL  InWindow = FALSE;
 	int i;
@@ -596,10 +603,13 @@ LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARA
 	switch (message)
 	{
 		case WM_CREATE:
+
+
 			hFont = CreateFont (14, 0, 0, 0, FW_NORMAL, 0, 1, 0,
 				   ANSI_CHARSET, OUT_DEFAULT_PRECIS,
 				   CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
 				   FF_SWISS, TEXT("MS Sans Serif"));
+
 			return 0;
 
 		case WM_DESTROY:
@@ -654,8 +664,10 @@ LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARA
 				{
 					_tcscpy(szMailTo, TEXT("mailto:"));
 					_tcscat(szMailTo, szText);
+					_tcscpy(szSubject, TEXT("&Subject="));
+					GetWindowText(GetParent(hwnd), &szSubject[9], sizeof (szText));
+					_tcscat(szMailTo, szSubject);
 					ShellExecute (NULL, NULL, _T(szMailTo), NULL, NULL, SW_SHOWNORMAL);
-
 				}
 				else if (_tcsstr(szText, TEXT("ftp."))) // ftp site
 				{
