@@ -57,7 +57,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,99,116,50,14
     ICON            ID_MYICON,IDC_STATIC0,7,7,20,20
-    LTEXT           "Printers - Default Printer Changer\n\nCopyright (C) 1998 - 2002 Timothy Legge",
+    LTEXT           "Printers - Default Printer Changer\nVersion 1, 1, 0, 2 (Beta)\nCopyright (C) 1998 - 2002 Timothy Legge",
                     IDC_STATIC1,32,7,139,27
     PUSHBUTTON      "Details",IDC_DETAILS,34,116,50,14
     LTEXT           "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
@@ -76,8 +76,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,0,1
- PRODUCTVERSION 1,1,0,1
+ FILEVERSION 1,1,0,2
+ PRODUCTVERSION 1,1,0,2
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -95,12 +95,12 @@ BEGIN
             VALUE "Comments", "This applet runs in the Windows 95/98 and NT 4.0 system tray and allows you to easily change the default printer.  It is subject to the terms of the GNU General Public License.\0"
             VALUE "CompanyName", "Timothy Legge\0"
             VALUE "FileDescription", "Printers\0"
-            VALUE "FileVersion", "1, 1, 0, 1\0"
+            VALUE "FileVersion", "1, 1, 0, 2\0"
             VALUE "InternalName", "Printers\0"
             VALUE "LegalCopyright", "Timothy Legge Copyright © 1998 - 2002\0"
             VALUE "OriginalFilename", "Printers.exe\0"
             VALUE "ProductName", "Default Printers\0"
-            VALUE "ProductVersion", "1, 1, 0, 1\0"
+            VALUE "ProductVersion", "1, 1, 0, 2\0"
         END
     END
     BLOCK "VarFileInfo"
