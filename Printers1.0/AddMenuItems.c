@@ -35,6 +35,7 @@ $Date$
 
 */
 #include <windows.h>
+#include <stdio.h>
 #include "include\trayicon.h"
 
 extern int iNbrMenuItemstoAdd;
@@ -61,7 +62,7 @@ int AddItemsToMenu(HMENU hMenu)
 	
 	/* Get the name of the Default Printer */
 	GetProfileString("windows", "device",",,,", DefaultPrinter, sizeof(DefaultPrinter));
-	DefaultPrinter == strtok(DefaultPrinter, ",");
+ 	sprintf(DefaultPrinter, "%s", strtok(DefaultPrinter, ","));
 	
 	if(osver==cWin95||osver==cWin98)
 	{
