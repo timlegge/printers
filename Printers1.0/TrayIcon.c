@@ -4,7 +4,7 @@
 Tray Icon Application that changes 
 the Default Printer Printer easily
 
-Copyright (C) 1998, 2000 Timothy Legge
+Copyright (C) 1998 - 2002 Timothy Legge
 Please see copying.txt for additional information
 
 This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ Contact Information:
   Timothy Legge
   Moncton, NB
 
-  tlegge@fundy.net
+  tlegge@rogers.com
 
 $Revision$
 $Author$
@@ -343,7 +343,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	char static tmpFileName[_MAX_PATH];
 	char buffer[_MAX_PATH];
 	HINSTANCE hInst=0;
-	char cDetails[869]="";
+	char cDetails[870]="";
 	FILE *fDetails;
 	int count=0;
 	
@@ -366,7 +366,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 			
 		case IDC_DETAILS:
-			LoadString(ghThisInst, IDS_DETAILS, cDetails, 869);
+			LoadString(ghThisInst, IDS_DETAILS, cDetails, 870);
 			
 			/* Display the Readme */
 			_getcwd( buffer, _MAX_PATH ); // Get Current Directory
@@ -381,7 +381,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 			
 			fDetails=fopen(tmpFileName, "w");
-			fwrite( cDetails, sizeof( char ), 869, fDetails );
+			fwrite( cDetails, sizeof( char ), 870, fDetails );
 			fclose(fDetails);
 			
 			// Open the file

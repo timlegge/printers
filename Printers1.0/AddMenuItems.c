@@ -4,7 +4,7 @@
 Tray Icon Application that changes 
 the Default Printer Printer easily
 
-Copyright (C) 1998, 2000 Timothy Legge
+Copyright (C) 1998 - 2002 Timothy Legge
 Please see copying.txt for additional information
 
 This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ Contact Information:
   Timothy Legge
   Moncton, NB
 
-  tlegge@fundy.net
+  tlegge@rogers.com
 
 
 $Revision$
