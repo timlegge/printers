@@ -40,11 +40,11 @@ $Date$
 #include <windowsx.h>	/* Used for GET_WM_COMMAND_ID
 							To get the MESSAGE to close
 							the about dialog box */
+#include <tchar.h>
 #include <stdio.h>		/* Defines sprintf function */
 #include <string.h>
 #include <direct.h>		/* Get the working Directory */
-#include <tchar.h>
-//#include <commctrl.h>		/* Not Needed */
+
 #include "include\resource.h"
 #include "include\TrayIcon.h"
 
@@ -57,7 +57,8 @@ LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARA
 int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt);
 BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip) ;
 BOOL bFileCreated = FALSE; 
-int ReadMeNum;
+
+
 /* 
 Modify the code in the following function to 
 add items to the menu
@@ -73,7 +74,7 @@ extern int MenuItemClicked(UINT ServerNumber, HMENU hMenu);
 HINSTANCE			ghThisInst;		// Global value for this instance of the Application
 HICON				hIcon; // Handle to the Tray Icon
 NOTIFYICONDATA		tnd; // Structure for the Tray Icon Data
-char szClassName[] = "Printers";	//Class Name
+TCHAR szClassName[] = TEXT("Printers");	//Class Name
 int iNbrMenuItemstoAdd;	// Number of menu items to add
 short osver;  // Operating System Version
 
@@ -98,7 +99,7 @@ short osver;  // Operating System Version
 
 int WINAPI WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, LPSTR lpszArgs, int nWinMode)
 {
-	char pszTip[28] = "Change Default Printer";// Tooltip displayed over Icon
+	TCHAR pszTip[28] = TEXT("Change Default Printer");// Tooltip displayed over Icon
 	
 	MSG msg;					// Message to be used in main message loop
 	HWND hwnd;					// Handle to the Window
@@ -154,15 +155,15 @@ Philip Jones (found via google)
 used with permission 
 -------------------------------*/
 	// create custom window class for hover buttons in dialog
-	wcl.cbSize   = sizeof(WNDCLASSEX);
-	wcl.style         = CS_HREDRAW | CS_VREDRAW ;
-	wcl.lpfnWndProc   = HoverTextWndProc ;
-	wcl.cbClsExtra    = wcl.cbWndExtra = 0 ;
-	wcl.hInstance     = hThisInst;
-	wcl.hIcon         = NULL ;
-	wcl.hCursor       = LoadCursor(hThisInst, IDC_HAND); 
+	wcl.cbSize		= sizeof(WNDCLASSEX);
+	wcl.style       = CS_HREDRAW | CS_VREDRAW ;
+	wcl.lpfnWndProc = HoverTextWndProc ;
+	wcl.cbClsExtra  = wcl.cbWndExtra = 0 ;
+	wcl.hInstance   = hThisInst;
+	wcl.hIcon       = NULL ;
+	wcl.hCursor     = LoadCursor(hThisInst, IDC_HAND); 
 	if(wcl.hCursor == NULL)
-		wcl.hCursor   = LoadImage (hThisInst, MAKEINTRESOURCE(IDC_LINK),IMAGE_CURSOR, 		   0, 0, LR_DEFAULTSIZE); 
+		wcl.hCursor = LoadImage (hThisInst, MAKEINTRESOURCE(IDC_LINK),IMAGE_CURSOR, 		   0, 0, LR_DEFAULTSIZE); 
 	wcl.hbrBackground = (HBRUSH) GetSysColorBrush(COLOR_BTNFACE) ;
 	wcl.lpszMenuName  = NULL ;
 	wcl.lpszClassName = TEXT ("HoverText") ;
@@ -214,10 +215,9 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 	HMENU static hMenu;	// Handle to the pop-up menu
 	POINT point;	// Point to hold co-ordinate to display menu
 	int result;  // Result of calling ModifyINI function
-	char pszTip[28] = "Change Default Printer";// Tooltip displayed over Icon
+	TCHAR pszTip[28] = TEXT("Change Default Printer");// Tooltip displayed over Icon
 	static UINT s_uTaskbarRestart;
-	char DefaultPrinter[255];
-	//LPCTSTR tempchar;
+	TCHAR DefaultPrinter[255];
 	
 	switch (message)
 	{
@@ -253,8 +253,8 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			if(result != 0)
 				MessageBox(
 				HWND_DESKTOP,
-				"Error clicking menu item\nReport to tlegge@fundy.net\n(ModifyINI)",
-				"Printers", MB_OK);
+				TEXT("Error clicking menu item\nReport to tlegge@fundy.net\n(ModifyINI)"),
+				TEXT("Printers"), MB_OK);
 			return 0;
 		}
 		break;
@@ -295,8 +295,8 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			to update the Tool Tip */
 
 			/* Get the name of the Default Printer */
-			GetProfileString("windows", "device",",,,", DefaultPrinter, sizeof(DefaultPrinter));
- 			sprintf(DefaultPrinter, "%s", strtok(DefaultPrinter, ","));
+			GetProfileString(TEXT("windows"), TEXT("device"), TEXT(",,,"), DefaultPrinter, sizeof(DefaultPrinter));
+ 			_stprintf(DefaultPrinter, TEXT("%s"), _tcstok(DefaultPrinter, TEXT(",")));
 
 			/* Display the default printer in the tooltip */
 				if (DefaultPrinter)
@@ -415,16 +415,15 @@ int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt)
 =			notepad readme.txt
 ======================================*/
 
+LPTSTR tmpFileName;	 
 
 BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	#define maxbuf 907
-	char static tmpFileName[_MAX_PATH];
-	LPCTSTR lpFileName = tmpFileName;
-	char buffer[_MAX_PATH];
+	TCHAR buffer[_MAX_PATH];
 	HINSTANCE hInst=0;
 	int ibuflen;
-	char cDetails[maxbuf]="";
+	TCHAR cDetails[maxbuf]="";
 
 #ifdef USECLIPBOARD
 	HGLOBAL      hGlobal ;
@@ -454,7 +453,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 						if(bFileCreated){ 
 							HANDLE hFile;
-							hFile = FindFirstFile(lpFileName,  // pointer to name of file to search for 
+							hFile = FindFirstFile(tmpFileName,  // pointer to name of file to search for 
 								&lpFindFileData  // pointer to returned information 
 								); 
  
@@ -465,6 +464,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							}
 						}
 #endif
+						free(tmpFileName);
 						EndDialog(hDlg, TRUE);
 					break;
 					
@@ -488,9 +488,9 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						// Open the file
 						if(!(hInst = ShellExecute(
 							hDlg,  // handle to parent window 
-							"open",  // pointer to string that specifies operation to perform 
+							TEXT("open"),  // pointer to string that specifies operation to perform 
 							//"C:\\Program Files\\Accessories\\WORDPAD.EXE",  // pointer to filename or folder name string 
-							"notepad.exe",
+							TEXT("notepad.exe"),
 							NULL,  // pointer to string that specifies executable-file parameters 
 							buffer,  // pointer to string that specifies default directory 
 							SW_SHOWDEFAULT  // whether file is shown when opened 
@@ -498,13 +498,13 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						{
 							MessageBox(
 								HWND_DESKTOP,
-								"Unable to find NotePad",
-								"Printers", MB_OK);
+								TEXT("Unable to find NotePad"),
+								TEXT("Printers"), MB_OK);
 							return FALSE;
 						}
 						
 
-						while((hWnd = FindWindow(NULL, "Untitled - Notepad"))==NULL)
+						while((hWnd = FindWindow(NULL, TEXT("Untitled - Notepad")))==NULL)
 							;
 						/*while((hWnd = FindWindow(NULL, "Document - Wordpad"))==NULL)
 							;*/
@@ -513,14 +513,14 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 								GW_CHILD // relationship flag  
 							); 
 
-						while(strcmp(lpWPClassName, lpClassName) !=0)
+						while(_tcscmp(lpWPClassName, lpClassName) !=0)
 						{
 
 							GetClassName(hChildWnd,  // handle of window 
 								lpClassName, // address of buffer for class name 
 								125 // size of buffer, in characters 
 							); 				
-							if(strcmp(lpWPClassName, lpClassName) !=0)
+							if(_tcscmp(lpWPClassName, lpClassName) !=0)
 								hChildWnd = GetNextWindow(hChildWnd,  // handle of original window 
 									GW_HWNDNEXT // relationship flag  
 								); 
@@ -535,16 +535,18 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #else
 						if(bFileCreated)
 							DeleteFile(tmpFileName);
+						else
+							 tmpFileName = malloc(260);
 						
 						/* Display the Readme */
 						_getcwd( buffer, _MAX_PATH ); // Get Current Directory
 						
 						// Create the File Name
-						sprintf(tmpFileName, "%s\\%s%s", buffer, ReadMeFileName,ReadMeFileNameExt);
-						lpFileName = tmpFileName;
+						_stprintf(tmpFileName, "%s\\%s%s", buffer, ReadMeFileName,ReadMeFileNameExt);
+						//lpFileName = tmpFileName;
 						
 						while((
-							hFile = CreateFile(lpFileName, // pointer to name of the file 
+							hFile = CreateFile(tmpFileName, // pointer to name of the file 
 								GENERIC_WRITE ,  // access (read-write) mode 
 								FILE_SHARE_WRITE ,  // share mode 
 								NULL,  // pointer to security attributes 
@@ -553,7 +555,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 								NULL  // handle to file with attributes to copy 
 							))==INVALID_HANDLE_VALUE)
 						{
-							sprintf(tmpFileName, "%s\\%s%i%s", buffer, ReadMeFileName, count, ReadMeFileNameExt);
+							_stprintf(tmpFileName, "%s\\%s%i%s", buffer, ReadMeFileName, count, ReadMeFileNameExt);
 							count++;
 						}
 
@@ -582,7 +584,6 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 		break;
 	}
-
 	return FALSE;
 	
 }
@@ -596,7 +597,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip) 
 { 
     BOOL res; 
-	char DefaultPrinter[255];
+	TCHAR DefaultPrinter[255];
 	
     tnd.cbSize = sizeof(NOTIFYICONDATA); 
     tnd.hWnd = hwnd; 
@@ -606,8 +607,8 @@ BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip)
     tnd.hIcon = hIcon; 
 
 	/* Get the name of the Default Printer */
-	GetProfileString("windows", "device",",,,", DefaultPrinter, sizeof(DefaultPrinter));
- 	sprintf(DefaultPrinter, "%s", strtok(DefaultPrinter, ","));
+	GetProfileString(TEXT("windows"), TEXT("device"), TEXT(",,,"), DefaultPrinter, sizeof(DefaultPrinter));
+ 	_stprintf(DefaultPrinter, "%s", _tcstok(DefaultPrinter, TEXT(",")));
 
 	/* Display the default printer in the tooltip */
 	if (DefaultPrinter)
@@ -615,7 +616,7 @@ BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip)
 	else if(lpszTip) 
         lstrcpyn(tnd.szTip, lpszTip, sizeof(tnd.szTip)); 
     else 
-        tnd.szTip[0] = '\0'; 
+        tnd.szTip[0] = _T('\0'); 
 	
     res = Shell_NotifyIcon(NIM_ADD, &tnd); 
 	
@@ -632,8 +633,8 @@ used with permission
 -------------------------------*/
 LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	TCHAR  szText[95];
-	TCHAR  szMailTo[95];
+	TCHAR  szText[95] = "";
+	TCHAR  szMailTo[95] = "";
 	TCHAR  szSubject[95];
 	TCHAR  szWeb[95];
 	TCHAR  szFTP[95];
@@ -705,11 +706,11 @@ LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARA
 			GetWindowText(hwnd, szText, sizeof (szText));
 
 			//see if link is web ("http://" or "www."), ftp (ftp://), email ("mailto:")
-			i = strlen(szText);
+			i = _tcslen(szText);
 			if (i)
 			{
 				
-				if (strstr(szText, "@"))   // email address
+				if (_tcsstr(szText, TEXT("@")))   // email address
 				{
 					_tcscpy(szMailTo, TEXT("mailto:"));
 					_tcscat(szMailTo, szText);
@@ -731,7 +732,7 @@ LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARA
 					ShellExecute (NULL, NULL, _T(szWeb), NULL, NULL, SW_SHOWNORMAL);
 				} 
 				else       // web site with http://
-					hInst = ShellExecute (hwnd, NULL, _T(szText), NULL, NULL, SW_SHOWNORMAL);
+					hInst = ShellExecute (hwnd, NULL, _T((szText)), NULL, NULL, SW_SHOWNORMAL);
 		
 			} 
 		  return 0 ;

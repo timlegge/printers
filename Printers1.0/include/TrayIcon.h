@@ -33,7 +33,7 @@ $Author$
 $Date$
 
 */
-
+//#define _UNICODE
 #define MYWM_NOTIFYICON		(WM_APP+100)
 #define MENU_OFFSET	3 // Offset the Exit, About. Separator Menu Items
 

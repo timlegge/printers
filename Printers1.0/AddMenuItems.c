@@ -36,11 +36,12 @@ $Date$
 */
 #include <windows.h>
 #include <stdio.h>
+#include <tchar.h>
 #include "include\trayicon.h"
 
 extern int iNbrMenuItemstoAdd;
 extern short osver;
-extern char DefaultPrinter[255];
+extern TCHAR DefaultPrinter[255];
 
 int AddMenuItems(HMENU hMenu, int x, LPTSTR tmpPrinter);
 
@@ -54,15 +55,15 @@ int AddItemsToMenu(HMENU hMenu)
 	BOOL bErr;
 	int numPrinters;
 	LPTSTR tmpPrinter;
-	char DefaultPrinter[255];
+	TCHAR DefaultPrinter[255];
 	int  x =0;	/*	Looper used for Adding 
 				and deleting Menu Items */
 	
 	DWORD errlast;
 	
 	/* Get the name of the Default Printer */
-	GetProfileString("windows", "device",",,,", DefaultPrinter, sizeof(DefaultPrinter));
- 	sprintf(DefaultPrinter, "%s", strtok(DefaultPrinter, ","));
+	GetProfileString(_T("windows"), _T("device"),_T(",,,"), DefaultPrinter, sizeof(DefaultPrinter));
+ 	_stprintf(DefaultPrinter, "%s", _tcstok(DefaultPrinter, ","));
 	
 	if(osver==cWin95||osver==cWin98)
 	{
@@ -76,7 +77,7 @@ int AddItemsToMenu(HMENU hMenu)
 			
 			if(!bErr)
 			{
-				MessageBox(HWND_DESKTOP, "Enumerating Printers Failed" , "Change Default Printer", MB_OK);
+				MessageBox(HWND_DESKTOP, _T("Enumerating Printers Failed") , _T("Change Default Printer"), MB_OK);
 				return FALSE;
 			}
 		}
@@ -95,7 +96,7 @@ int AddItemsToMenu(HMENU hMenu)
 			bErr = EnumPrinters(PRINTER_ENUM_LOCAL|PRINTER_ENUM_CONNECTIONS, NULL, 4, (LPBYTE) ppinfo4, dwNeeded, &dwNeeded, &dwReturned);
 			if(!bErr)
 			{
-				MessageBox(HWND_DESKTOP, "Enumerating Printers Failed" , "Change Default Printer", MB_OK);
+				MessageBox(HWND_DESKTOP, _T("Enumerating Printers Failed") , _T("Change Default Printer"), MB_OK);
 				return FALSE;
 			}
 			
@@ -118,13 +119,12 @@ int AddItemsToMenu(HMENU hMenu)
 		else if (osver==cWinNT)
 		{
 			tmpPrinter = ppinfo4[numPrinters].pPrinterName;
-			free(ppinfo4);
 		}
 		
 		AddMenuItems(hMenu, x, tmpPrinter);
 		
 		
-		if(strcmp(DefaultPrinter, tmpPrinter)==0)
+		if(_tcscmp(DefaultPrinter, tmpPrinter)==0)
 		{
 			CheckMenuItem(hMenu, MENU_OFFSET+x, MF_CHECKED);
 		}

@@ -37,6 +37,7 @@ $Date$
 
 #include <windows.h>
 #include <stdio.h>
+#include <tchar.h>
 #include "include\trayicon.h"
 
 extern int iNbrMenuItemstoAdd;
@@ -55,7 +56,7 @@ int MenuItemClicked(UINT iMenuItemSelected, HMENU hMenu)
 	LPTSTR tmpPrinter = malloc(MAX_PATH);
 	LPTSTR lpMappedPort;
 	LPTSTR infobuff;
-	char pszTip[28] = ""; // Tooltip displayed over Icon
+	TCHAR pszTip[28] = _T(""); // Tooltip displayed over Icon
 	int  x =0;	
 	/*	Looper used for Adding 
 	and deleting Menu Items */
@@ -74,12 +75,12 @@ int MenuItemClicked(UINT iMenuItemSelected, HMENU hMenu)
 			bErr = EnumPrinters(PRINTER_ENUM_LOCAL , NULL, 2, (LPBYTE) ppinfo2, dwNeeded, &dwNeeded, &dwReturned);
 			if(!bErr)
 			{
-				MessageBox(HWND_DESKTOP, "Enumerating Printers Failed" , "Change Default Printer", MB_OK);
+				MessageBox(HWND_DESKTOP, _T("Enumerating Printers Failed") , _T("Change Default Printer"), MB_OK);
 				return FALSE;
 			}
-			sprintf(tmpPrinter, "%s,%s,%s", ppinfo2[iMenuItemSelected].pPrinterName, ppinfo2[iMenuItemSelected].pDriverName, ppinfo2[iMenuItemSelected].pPortName);
-			WriteProfileString("windows", "device", tmpPrinter);
-			tempretn = SendMessageTimeout(HWND_BROADCAST, WM_WININICHANGE, 0L, (LPARAM)(LPCTSTR)"windows", SMTO_NORMAL, 1000, NULL);
+			_stprintf(tmpPrinter, "%s,%s,%s", ppinfo2[iMenuItemSelected].pPrinterName, ppinfo2[iMenuItemSelected].pDriverName, ppinfo2[iMenuItemSelected].pPortName);
+			WriteProfileString(_T("windows"), _T("device"), tmpPrinter);
+			tempretn = SendMessageTimeout(HWND_BROADCAST, WM_WININICHANGE, 0L, (LPARAM)(LPCTSTR) _T("windows"), SMTO_NORMAL, 1000, NULL);
 			//HeapFree( GetProcessHeap(), 0, ppinfo2 ); 
 			free(ppinfo2);
 			
@@ -96,7 +97,7 @@ int MenuItemClicked(UINT iMenuItemSelected, HMENU hMenu)
 		GetMenuString(hMenu, iMenuItemSelected, infobuff, 255, MF_BYCOMMAND);
 		
 		tempretn = RegOpenKeyEx(HKEY_CURRENT_USER,  // handle of open key 
-			"Software\\Microsoft\\Windows NT\\CurrentVersion\\Devices", // address of name of subkey to open 
+			_T("Software\\Microsoft\\Windows NT\\CurrentVersion\\Devices"), // address of name of subkey to open 
 			0,  // reserved 
 			KEY_QUERY_VALUE , // security access mask 
 			&hKey // address of handle of open key 
@@ -124,11 +125,11 @@ int MenuItemClicked(UINT iMenuItemSelected, HMENU hMenu)
 		
 		RegCloseKey(hKey);
 		
-		sprintf(tmpPrinter, "%s,%s", infobuff, lpMappedPort);
+		_stprintf(tmpPrinter, "%s,%s", infobuff, lpMappedPort);
 		//HeapFree( GetProcessHeap(), 0, lpMappedPort); 
 		free(infobuff);
 		free(lpMappedPort);
-		WriteProfileString("windows", "device", tmpPrinter);
+		WriteProfileString(_T("windows"), _T("device"), tmpPrinter);
 		SendMessageTimeout(HWND_BROADCAST, WM_WININICHANGE, 0L, 0L, SMTO_NORMAL, 1000, NULL);
 	}
 	
