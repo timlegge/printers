@@ -5,6 +5,7 @@ Tray Icon Application that changes
 the Default Printer Printer easily
 
 Copyright (C) 1998 - 2002 Timothy Legge
+
 Please see copying.txt for additional information
 
 This program is free software; you can redistribute it and/or modify
@@ -34,6 +35,7 @@ $Date$
 
 */
 
+#define _WIN32_WINNT 0x0500
 #include <windows.h>
 #include <windowsx.h>	/* Used for GET_WM_COMMAND_ID
 							To get the MESSAGE to close
@@ -41,6 +43,8 @@ $Date$
 #include <stdio.h>		/* Defines sprintf function */
 #include <string.h>
 #include <direct.h>		/* Get the working Directory */
+#include <tchar.h>
+
 #include "include\resource.h"
 #include "include\TrayIcon.h"
 
@@ -49,6 +53,7 @@ $Date$
 
 LRESULT CALLBACK WindowFunc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt);
 BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip) ;
 BOOL bFileCreated = FALSE; 
@@ -96,6 +101,7 @@ int WINAPI WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, LPSTR lpszArgs, int
 	MSG msg;					// Message to be used in main message loop
 	HWND hwnd;					// Handle to the Window
 	WNDCLASS wcl;				// Structure for the Window class information
+	WNDCLASSEX wc;				// Structure used for the Hover Text Window Class
 	OSVERSIONINFO		osvinfo;// Get the OS version for NT compatability
 	ghThisInst = hThisInst;		// Set global value for this instance of the Application
 	
@@ -138,6 +144,34 @@ int WINAPI WinMain(HINSTANCE hThisInst, HINSTANCE hPrevInst, LPSTR lpszArgs, int
 	
 	if(!RegisterClass (&wcl)) return 0;	// Register Window Class
 	
+/*-----------------------------
+HoverText based on code from 
+Philip Jones (found via google)
+used with permission 
+-------------------------------*/
+	// create custom window class for hover buttons in dialog
+	wc.cbSize   = sizeof(WNDCLASSEX);
+	wc.style         = CS_HREDRAW | CS_VREDRAW ;
+	wc.lpfnWndProc   = HoverTextWndProc ;
+	wc.cbClsExtra    = wc.cbWndExtra = 0 ;
+	wc.hInstance     = hThisInst;
+	wc.hIcon         = NULL ;
+	wc.hCursor       = LoadCursor(hThisInst, IDC_HAND); 
+	if(wc.hCursor == NULL)
+		wc.hCursor   = LoadImage (hThisInst, MAKEINTRESOURCE(IDC_LINK),IMAGE_CURSOR, 		   0, 0, LR_DEFAULTSIZE); 
+	
+	
+	wc.hbrBackground = (HBRUSH) GetSysColorBrush(COLOR_BTNFACE) ;
+	wc.lpszMenuName  = NULL ;
+	wc.lpszClassName = TEXT ("HoverText") ;
+	wc.hIcon   = NULL;
+
+	RegisterClassEx (&wc) ;
+/*-----------------------------
+End HoverText based on code from 
+Philip Jones (found via google)
+used with permission 
+-------------------------------*/
 	// Create the window, but do not display it.
 	hwnd = CreateWindow(
 		szClassName,
@@ -537,3 +571,111 @@ BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip)
     return res; 
 } 
 
+/*-----------------------------
+HoverText based on code from 
+Philip Jones (found via google)
+used with permission 
+-------------------------------*/
+LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	TCHAR       szText[85];
+	TCHAR  szMailTo[95];
+	TCHAR  szWeb[95];
+	TCHAR  szFTP[95];
+	HDC         hdc ;
+	PAINTSTRUCT ps ;
+	RECT        rect ;
+	static  HFONT hFont;
+	HINSTANCE hInst;
+
+
+	TRACKMOUSEEVENT tme;
+	static BOOL  InWindow = FALSE;
+	int i;
+
+	switch (message)
+	{
+		case WM_CREATE:
+			hFont = CreateFont (14, 0, 0, 0, FW_NORMAL, 0, 1, 0,
+				   ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+				   CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+				   FF_SWISS, TEXT("MS Sans Serif"));
+			return 0;
+
+		case WM_DESTROY:
+			  DeleteObject (hFont);
+			  return 0;
+
+		case WM_MOUSEMOVE:
+			if (!InWindow)
+			{
+					InWindow = TRUE;
+					InvalidateRect(hwnd, NULL, TRUE);
+					tme.cbSize = sizeof(TRACKMOUSEEVENT);
+					tme.dwFlags = TME_LEAVE;
+					tme.hwndTrack = hwnd;
+					TrackMouseEvent(&tme);
+			}
+			break;
+
+		case WM_MOUSELEAVE:
+			  InWindow = FALSE;
+			  InvalidateRect(hwnd, NULL, TRUE);
+			  break;
+
+		case WM_PAINT :
+			GetClientRect (hwnd, &rect) ;
+			GetWindowText (hwnd, szText, sizeof (szText)) ;
+
+			hdc = BeginPaint (hwnd, &ps) ;
+
+			SetBkColor (hdc, GetSysColor (COLOR_BTNFACE)) ;
+
+			if (InWindow)
+			SetTextColor (hdc, RGB(255,0,0)) ;  // red, underlined
+			else
+			SetTextColor (hdc, RGB(0,0,255)) ;  // blue, underlined
+
+			SelectObject(hdc, hFont);
+			DrawText (hdc, szText, -1, &rect, DT_SINGLELINE | DT_LEFT | DT_VCENTER) ;
+
+			EndPaint (hwnd, &ps) ;
+			return 0 ;
+
+		case WM_LBUTTONDOWN :
+			GetWindowText(hwnd, szText, sizeof (szText));
+
+			//see if link is web ("http://" or "www."), ftp (ftp://), email ("mailto:")
+			i = strlen(szText);
+			if (i)
+			{
+				
+				if (strstr(szText, "@"))   // email address
+				{
+					_tcscpy(szMailTo, TEXT("mailto:"));
+					_tcscat(szMailTo, szText);
+					ShellExecute (NULL, NULL, _T(szMailTo), NULL, NULL, SW_SHOWNORMAL);
+
+				}
+				else if (_tcsstr(szText, TEXT("ftp."))) // ftp site
+				{
+					_tcscpy(szFTP,  TEXT("ftp://"));
+					_tcscat(szFTP, szText);
+					ShellExecute (NULL, NULL, _T(szFTP), NULL, NULL, SW_SHOWNORMAL);
+				}
+				else if (szText[0] == 'w')  // web site without http://
+				{
+					_tcscpy(szWeb,  TEXT("http://"));
+					_tcscat(szWeb, szText);
+					ShellExecute (NULL, NULL, _T(szWeb), NULL, NULL, SW_SHOWNORMAL);
+				} 
+				else       // web site with http://
+					hInst = ShellExecute (hwnd, NULL, _T(szText), NULL, NULL, SW_SHOWNORMAL);
+		
+			} 
+		  return 0 ;
+
+	} 
+
+return DefWindowProc (hwnd, message, wParam, lParam) ;
+}

@@ -94,6 +94,10 @@ SOURCE=.\AddMenuItems.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\Hlink.cur
+# End Source File
+# Begin Source File
+
 SOURCE=.\MenuItemClicked.c
 # End Source File
 # Begin Source File
@@ -107,6 +111,13 @@ SOURCE=.\TrayIcon.c
 # Begin Source File
 
 SOURCE=.\trayicon.rc
+
+!IF  "$(CFG)" == "Printers - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "Printers - Win32 Debug"
+
+!ENDIF 
+
 # End Source File
 # End Target
 # End Project
