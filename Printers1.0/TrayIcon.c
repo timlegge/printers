@@ -57,7 +57,7 @@ LRESULT CALLBACK HoverTextWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARA
 int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt);
 BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip) ;
 BOOL bFileCreated = FALSE; 
-
+int ReadMeNum;
 /* 
 Modify the code in the following function to 
 add items to the menu
@@ -83,8 +83,10 @@ short osver;  // Operating System Version
 = to each use of application using =
 = the TrayIcon menu				   =
  ================================*/
-
-
+#ifdef USECLIPBOARD
+#else
+	FILE *fDetails;
+#endif
 
 /* ===============================
 = End of global variable section =  
@@ -398,39 +400,48 @@ int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt)
 
 BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	#define maxbuf 880
+	#define maxbuf 907
 	char static tmpFileName[_MAX_PATH];
+	LPCTSTR lpFileName = tmpFileName;
 	char buffer[_MAX_PATH];
 	HINSTANCE hInst=0;
 	int ibuflen;
 	char cDetails[maxbuf]="";
+
 #ifdef USECLIPBOARD
 	HGLOBAL      hGlobal ;
 	PTSTR        pGlobal ;
 	LPTSTR lpClassName = "";
-	LPTSTR lpWPClassName = "RichEdit20A";
+//	LPTSTR lpWPClassName = "RichEdit20A";
+	LPTSTR lpWPClassName = "Edit";
 	HWND hWnd;
 	HWND hChildWnd;
-	//HWND hweb;
-
 #else
-	FILE *fDetails;
+	WIN32_FIND_DATA lpFindFileData;
+	HANDLE hFile;
+	DWORD lpNumberOfBytesWritten;
 #endif
+
 	int count=0;
 
 
 	switch(uMsg)
 	{
 		case WM_COMMAND:
-				switch(GET_WM_COMMAND_ID(wParam, lParam))
+			switch(GET_WM_COMMAND_ID(wParam, lParam))
 				{
 					case IDOK:
 #ifdef USECLIPBOARD
 #else
+
 						if(bFileCreated){ 
-							fDetails=fopen(tmpFileName, "r");
-							if(fDetails){
-								fclose(fDetails);
+							HANDLE hFile;
+							hFile = FindFirstFile(lpFileName,  // pointer to name of file to search for 
+								&lpFindFileData  // pointer to returned information 
+								); 
+ 
+							if(hFile){
+								CloseHandle (hFile);
 								if(DeleteFile(tmpFileName));
 									bFileCreated = FALSE; 
 							}
@@ -440,6 +451,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					break;
 					
 					case IDC_DETAILS:
+
 						ibuflen = LoadString(ghThisInst, IDS_DETAILS, cDetails, maxbuf);
 						
 #ifdef USECLIPBOARD
@@ -456,19 +468,28 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 						GlobalFree(hGlobal); // handle to the global memory object 
 
 						// Open the file
-						hInst = ShellExecute(
+						if(!(hInst = ShellExecute(
 							hDlg,  // handle to parent window 
 							"open",  // pointer to string that specifies operation to perform 
-							"C:\\Program Files\\Accessories\\WORDPAD.EXE",  // pointer to filename or folder name string 
+							//"C:\\Program Files\\Accessories\\WORDPAD.EXE",  // pointer to filename or folder name string 
+							"notepad.exe",
 							NULL,  // pointer to string that specifies executable-file parameters 
 							buffer,  // pointer to string that specifies default directory 
 							SW_SHOWDEFAULT  // whether file is shown when opened 
-						);
+						)))
+						{
+							MessageBox(
+								HWND_DESKTOP,
+								"Unable to find NotePad",
+								"Printers", MB_OK);
+							return FALSE;
+						}
+						
 
-						/*	while((hWnd = FindWindow(NULL, "Untitled - Notepad"))==NULL)
-							;*/
-						while((hWnd = FindWindow(NULL, "Document - Wordpad"))==NULL)
+						while((hWnd = FindWindow(NULL, "Untitled - Notepad"))==NULL)
 							;
+						/*while((hWnd = FindWindow(NULL, "Document - Wordpad"))==NULL)
+							;*/
 						
 						hChildWnd = GetWindow(hWnd,  // handle of original window 
 								GW_CHILD // relationship flag  
@@ -494,39 +515,49 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 							0  // second message parameter 
 							);
 #else
+						if(bFileCreated)
+							DeleteFile(tmpFileName);
 						
 						/* Display the Readme */
 						_getcwd( buffer, _MAX_PATH ); // Get Current Directory
 						
 						// Create the File Name
 						sprintf(tmpFileName, "%s\\%s%s", buffer, ReadMeFileName,ReadMeFileNameExt);
+						lpFileName = tmpFileName;
 						
-						while(((fDetails=fopen(tmpFileName, "r+"))!=NULL) || ((fopen(tmpFileName, "w"))==NULL))
+						while((
+							hFile = CreateFile(lpFileName, // pointer to name of the file 
+								GENERIC_WRITE ,  // access (read-write) mode 
+								FILE_SHARE_WRITE ,  // share mode 
+								NULL,  // pointer to security attributes 
+								CREATE_NEW,  // how to create 
+								FILE_ATTRIBUTE_NORMAL,  // file attributes 
+								NULL  // handle to file with attributes to copy 
+							))==INVALID_HANDLE_VALUE)
 						{
 							sprintf(tmpFileName, "%s\\%s%i%s", buffer, ReadMeFileName, count, ReadMeFileNameExt);
-							if(fDetails!=NULL){
-								if(fclose(fDetails)==0)
-									fDetails=NULL;
-							}
 							count++;
 						}
-						
-						if((fDetails=fopen(tmpFileName, "w"))!=NULL){
-							fwrite( cDetails, sizeof( char ), ibuflen, fDetails );
-							if(fclose(fDetails)==0)
-								fDetails=NULL;
-						
-							// Open the file
-							hInst = ShellExecute(
-								hDlg,  // handle to parent window 
-								"open",  // pointer to string that specifies operation to perform 
-								tmpFileName,  // pointer to filename or folder name string 
-								NULL,  // pointer to string that specifies executable-file parameters 
-								buffer,  // pointer to string that specifies default directory 
-								SW_SHOWDEFAULT  // whether file is shown when opened 
-							);
-							bFileCreated = TRUE; 
-						}
+
+						WriteFile(hFile,  // handle to file to write to 
+							 cDetails,  // pointer to data to write to file 
+							 ibuflen, // number of bytes to write 
+							 &lpNumberOfBytesWritten,  // pointer to number of bytes written 
+							 NULL  // pointer to structure needed for overlapped I/O 
+							); 
+
+						CloseHandle (hFile);
+					
+						// Open the file
+						hInst = ShellExecute(
+							hDlg,  // handle to parent window 
+							"open",  // pointer to string that specifies operation to perform 
+							tmpFileName,  // pointer to filename or folder name string 
+							NULL,  // pointer to string that specifies executable-file parameters 
+							buffer,  // pointer to string that specifies default directory 
+							SW_SHOWDEFAULT  // whether file is shown when opened 
+						);
+						bFileCreated = TRUE; 
 #endif
 
 					break;
