@@ -11,23 +11,17 @@ Project's tools are:
 			"Custom Build" with flags ""
 			"<Component 0xa>" with flags ""
 
-Creating command line "rc.exe /l 0x409 /fo"Release/trayicon.res" /d "NDEBUG" "C:\Printers\TrayIcon\trayicon.rc"" 
-Creating temp file "C:\WINDOWS\TEMP\RSPF2F0.TMP" with contents </nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Fp"Release/TrayIcon.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
-"C:\Printers\TrayIcon\AddMenuItems.c"
-"C:\Printers\TrayIcon\MenuItemClicked.c"
+Creating temp file "C:\WINDOWS\TEMP\RSP373.TMP" with contents </nologo /ML /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /Fp"Release/TrayIcon.pch" /YX /Fo"Release/" /Fd"Release/" /FD /c 
 "C:\Printers\TrayIcon\TrayIcon.c"
 >
-Creating command line "cl.exe @C:\WINDOWS\TEMP\RSPF2F0.TMP" 
-Creating temp file "C:\WINDOWS\TEMP\RSPF2F1.TMP" with contents <kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /incremental:no /pdb:"Release/TrayIcon.pdb" /machine:I386 /out:"Release/TrayIcon.exe" 
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSP373.TMP" 
+Creating temp file "C:\WINDOWS\TEMP\RSP0374.TMP" with contents <kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /incremental:no /pdb:"Release/TrayIcon.pdb" /machine:I386 /out:"Release/TrayIcon.exe" 
 .\Release\AddMenuItems.obj
 .\Release\MenuItemClicked.obj
 .\Release\TrayIcon.obj
 .\Release\trayicon.res>
-Creating command line "link.exe @C:\WINDOWS\TEMP\RSPF2F1.TMP" 
-Compiling resources...
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSP0374.TMP" 
 Compiling...
-AddMenuItems.c
-MenuItemClicked.c
 TrayIcon.c
 Linking...
 

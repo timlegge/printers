@@ -45,6 +45,8 @@ $Date$
 #include "include\TrayIcon.h"
 
 
+#define USECLIPBOARD
+
 LRESULT CALLBACK WindowFunc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt);
@@ -346,62 +348,134 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	HINSTANCE hInst=0;
 	int ibuflen;
 	char cDetails[maxbuf]="";
+#ifdef USECLIPBOARD
+	HGLOBAL      hGlobal ;
+	PTSTR        pGlobal ;
+	LPTSTR lpClassName = "";
+	LPTSTR lpWPClassName = "RichEdit20A";
+	HWND hWnd;
+	HWND hChildWnd;
+#else
 	FILE *fDetails;
+#endif
 	int count=0;
-	
-	
+
+
 	switch(uMsg)
 	{
-	case WM_COMMAND:
-		switch(GET_WM_COMMAND_ID(wParam, lParam))
-		{
-		case IDOK:
-			if(bFileCreated){ 
-				fDetails=fopen(tmpFileName, "r");
-				if(fDetails){
-					fclose(fDetails);
-					DeleteFile(tmpFileName);
-					bFileCreated = FALSE; 
+		case WM_COMMAND:
+				switch(GET_WM_COMMAND_ID(wParam, lParam))
+				{
+					case IDOK:
+#ifdef USECLIPBOARD
+#else
+						if(bFileCreated){ 
+							fDetails=fopen(tmpFileName, "r");
+							if(fDetails){
+								fclose(fDetails);
+								if(DeleteFile(tmpFileName));
+									bFileCreated = FALSE; 
+							}
+						}
+#endif
+						EndDialog(hDlg, TRUE);
+					break;
+					
+					case IDC_DETAILS:
+						ibuflen = LoadString(ghThisInst, IDS_DETAILS, cDetails, maxbuf);
+						
+#ifdef USECLIPBOARD
+						hGlobal = GlobalAlloc(
+							GHND | GMEM_SHARE, 
+							(ibuflen + 1) * sizeof (char));
+						pGlobal = GlobalLock (hGlobal) ;
+						lstrcpy (pGlobal, cDetails) ;
+						GlobalUnlock (hGlobal) ;
+						OpenClipboard(hDlg);
+						EmptyClipboard();
+						SetClipboardData (CF_TEXT, hGlobal) ;
+						CloseClipboard();
+						GlobalFree(hGlobal); // handle to the global memory object 
+
+						// Open the file
+						hInst = ShellExecute(
+							hDlg,  // handle to parent window 
+							"open",  // pointer to string that specifies operation to perform 
+							"C:\\Program Files\\Accessories\\WORDPAD.EXE",  // pointer to filename or folder name string 
+							NULL,  // pointer to string that specifies executable-file parameters 
+							buffer,  // pointer to string that specifies default directory 
+							SW_SHOWDEFAULT  // whether file is shown when opened 
+						);
+
+						/*	while((hWnd = FindWindow(NULL, "Untitled - Notepad"))==NULL)
+							;*/
+						while((hWnd = FindWindow(NULL, "Document - Wordpad"))==NULL)
+							;
+						
+						hChildWnd = GetWindow(hWnd,  // handle of original window 
+								GW_CHILD // relationship flag  
+							); 
+
+						while(strcmp(lpWPClassName, lpClassName) !=0)
+						{
+
+							GetClassName(hChildWnd,  // handle of window 
+								lpClassName, // address of buffer for class name 
+								125 // size of buffer, in characters 
+							); 				
+							if(strcmp(lpWPClassName, lpClassName) !=0)
+								hChildWnd = GetNextWindow(hChildWnd,  // handle of original window 
+									GW_HWNDNEXT // relationship flag  
+								); 
+
+						}
+
+						SendMessage(hChildWnd,  // handle of destination window 
+							WM_PASTE,  // message to send 
+							0, // first message parameter 
+							0  // second message parameter 
+							);
+#else
+						
+						/* Display the Readme */
+						_getcwd( buffer, _MAX_PATH ); // Get Current Directory
+						
+						// Create the File Name
+						sprintf(tmpFileName, "%s\\%s%s", buffer, ReadMeFileName,ReadMeFileNameExt);
+						
+						while(((fDetails=fopen(tmpFileName, "r+"))!=NULL) || ((fopen(tmpFileName, "w"))==NULL))
+						{
+							sprintf(tmpFileName, "%s\\%s%i%s", buffer, ReadMeFileName, count, ReadMeFileNameExt);
+							if(fDetails!=NULL){
+								if(fclose(fDetails)==0)
+									fDetails=NULL;
+							}
+							count++;
+						}
+						
+						if((fDetails=fopen(tmpFileName, "w"))!=NULL){
+							fwrite( cDetails, sizeof( char ), ibuflen, fDetails );
+							if(fclose(fDetails)==0)
+								fDetails=NULL;
+						
+							// Open the file
+							hInst = ShellExecute(
+								hDlg,  // handle to parent window 
+								"open",  // pointer to string that specifies operation to perform 
+								tmpFileName,  // pointer to filename or folder name string 
+								NULL,  // pointer to string that specifies executable-file parameters 
+								buffer,  // pointer to string that specifies default directory 
+								SW_SHOWDEFAULT  // whether file is shown when opened 
+							);
+							bFileCreated = TRUE; 
+						}
+#endif
+
+					break;
 				}
-			}
-			EndDialog(hDlg, TRUE);
-			break;
-			
-		case IDC_DETAILS:
-			
-			ibuflen = LoadString(ghThisInst, IDS_DETAILS, cDetails, maxbuf);
-			
-			/* Display the Readme */
-			_getcwd( buffer, _MAX_PATH ); // Get Current Directory
-			
-			// Create the File Name
-			sprintf(tmpFileName, "%s\\%s%s", buffer, ReadMeFileName,ReadMeFileNameExt);
-			
-			while((fDetails=fopen(tmpFileName, "r+"))!=NULL)
-			{
-				sprintf(tmpFileName, "%s\\%s%i%s", buffer, ReadMeFileName, count, ReadMeFileNameExt);
-				count++;
-			}
-			
-			fDetails=fopen(tmpFileName, "w");
-			fwrite( cDetails, sizeof( char ), ibuflen, fDetails );
-			fclose(fDetails);
-			
-			// Open the file
-			hInst = ShellExecute(
-				hDlg,  // handle to parent window 
-				"open",  // pointer to string that specifies operation to perform 
-				tmpFileName,  // pointer to filename or folder name string 
-				NULL,  // pointer to string that specifies executable-file parameters 
-				buffer,  // pointer to string that specifies default directory 
-				SW_SHOWDEFAULT  // whether file is shown when opened 
-				);
-			bFileCreated = TRUE; 
-			
-			break;
-		}
 		break;
 	}
+
 	return 0;
 	
 }

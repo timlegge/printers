@@ -1,13 +1,6 @@
-/*
-$Revision$
-$Author$
-$Date$
-
-*/
-
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
-// Used by TrayIcon.rc
+// Used by C:\Printers\Printers1.0\trayicon.rc
 //
 #define IDS_DETAILS                     1000
 #define ID_MYICON                       1500
