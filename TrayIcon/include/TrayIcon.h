@@ -44,3 +44,8 @@ $Date$
 #define cWin95 1
 #define cWinNT 2
 #define cWin98 3
+
+//For those people who do not have the absolutely latest SDK header files
+#ifndef IDC_HAND
+#define IDC_HAND MAKEINTRESOURCE(32649)   // Taken from VC6 WINUSER.H
+#endif // IDC_HAND

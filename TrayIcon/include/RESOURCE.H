@@ -1,15 +1,11 @@
-/*
-$Revision$
-$Author$
-$Date$
-
-*/
-
 //{{NO_DEPENDENCIES}}
 // Microsoft Developer Studio generated include file.
-// Used by TrayIcon.rc
+// Used by C:\Printers\TrayIcon\TrayIcon.rc
 //
+#define IDC_LINK                        102
 #define IDS_DETAILS                     1000
+#define IDC_EMAIL                       1003
+#define IDC_WEB                         1004
 #define ID_MYICON                       1500
 #define IDD_DIALOG                      2500
 #define IDC_DETAILS                     2501
@@ -26,7 +22,7 @@ $Date$
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
-#define _APS_NEXT_RESOURCE_VALUE        102
+#define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40005
 #define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           102
