@@ -49,7 +49,8 @@ LRESULT CALLBACK WindowFunc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt);
 BOOL AddTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip) ;
-//BOOL ModifyTaskBarIcon(HWND hwnd, UINT uID, LPSTR lpszTip); 
+BOOL bFileCreated = FALSE; 
+
 /* 
 Modify the code in the following function to 
 add items to the menu
@@ -335,6 +336,8 @@ int ShowMenu(HWND hwnd, HMENU hMenu, POINT pt)
 =		2) <Details> - Creates and opens
 =			notepad readme.txt
 ======================================*/
+
+
 BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	char static tmpFileName[_MAX_PATH];
@@ -351,10 +354,13 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		switch(GET_WM_COMMAND_ID(wParam, lParam))
 		{
 		case IDOK:
-			fDetails=fopen(tmpFileName, "r");
-			if(fDetails){
-				fclose(fDetails);
-				DeleteFile(tmpFileName);
+			if(bFileCreated){ 
+				fDetails=fopen(tmpFileName, "r");
+				if(fDetails){
+					fclose(fDetails);
+					DeleteFile(tmpFileName);
+					bFileCreated = FALSE; 
+				}
 			}
 			EndDialog(hDlg, TRUE);
 			break;
@@ -387,7 +393,7 @@ BOOL CALLBACK AboutProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				buffer,  // pointer to string that specifies default directory 
 				SW_SHOWDEFAULT  // whether file is shown when opened 
 				);
-			
+			bFileCreated = TRUE; 
 			
 			break;
 		}
