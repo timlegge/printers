@@ -68,8 +68,8 @@ int AddItemsToMenu(HMENU hMenu)
 	{
 		EnumPrinters (PRINTER_ENUM_LOCAL,  NULL, 5, "", 0, &dwNeeded, &dwReturned);
 		errlast = GetLastError();
-		ppinfo5 = (LPPRINTER_INFO_5) HeapAlloc (GetProcessHeap(), HEAP_ZERO_MEMORY, dwNeeded);
-		
+		//ppinfo5 = (LPPRINTER_INFO_5) HeapAlloc (GetProcessHeap(), HEAP_ZERO_MEMORY, dwNeeded);
+		ppinfo5 = malloc(dwNeeded);
 		if (ppinfo5)
 		{
 			bErr = EnumPrinters(PRINTER_ENUM_LOCAL , NULL, 5, (LPBYTE) ppinfo5, dwNeeded, &dwNeeded, &dwReturned);
@@ -88,7 +88,8 @@ int AddItemsToMenu(HMENU hMenu)
 	else if (osver==cWinNT)
 	{
 		EnumPrinters (PRINTER_ENUM_LOCAL|PRINTER_ENUM_CONNECTIONS,  NULL, 4, "", 0,  &dwNeeded, &dwReturned);
-		ppinfo4 = (LPPRINTER_INFO_4) HeapAlloc (GetProcessHeap(), HEAP_ZERO_MEMORY, dwNeeded);
+		//ppinfo4 = (LPPRINTER_INFO_4) HeapAlloc (GetProcessHeap(), HEAP_ZERO_MEMORY, dwNeeded);
+		ppinfo4 = malloc(dwNeeded);
 		if (ppinfo4)
 		{
 			bErr = EnumPrinters(PRINTER_ENUM_LOCAL|PRINTER_ENUM_CONNECTIONS, NULL, 4, (LPBYTE) ppinfo4, dwNeeded, &dwNeeded, &dwReturned);
@@ -111,10 +112,13 @@ int AddItemsToMenu(HMENU hMenu)
 		if(osver==cWin95||osver==cWin98)
 		{
 			tmpPrinter = ppinfo5[numPrinters].pPrinterName;
+
+
 		}
 		else if (osver==cWinNT)
 		{
 			tmpPrinter = ppinfo4[numPrinters].pPrinterName;
+			free(ppinfo4);
 		}
 		
 		AddMenuItems(hMenu, x, tmpPrinter);
@@ -126,18 +130,11 @@ int AddItemsToMenu(HMENU hMenu)
 		}
 		x++;
 	}
-	
-	/*		HeapFree( 
-	GetProcessHeap(),  // handle to the heap 
-	0,  // heap freeing flags 
-	ppinfo5 // pointer to the memory to free 
-	); 
-	HeapFree( 
-				GetProcessHeap(),  // handle to the heap 
-				0,  // heap freeing flags 
-				ppinfo4 // pointer to the memory to free 
-				); 
-	*/
+	if(osver==cWin95||osver==cWin98)
+		free(ppinfo5);
+	else if (osver==cWinNT)
+		free(ppinfo4);
+
 	iNbrMenuItemstoAdd = (int)dwReturned;
 	
 	return 0;

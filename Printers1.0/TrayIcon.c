@@ -305,9 +305,27 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 					lstrcpyn(tnd.szTip, pszTip, sizeof(tnd.szTip));
 	
 				Shell_NotifyIcon(NIM_MODIFY, &tnd); 
+			break;
+		case WM_DESTROY:
+			// If icon exists destroy it
+			if(hIcon)	
+			{
+				Shell_NotifyIcon(NIM_DELETE, &tnd);
+				DestroyMenu(hMenu);
+				DestroyIcon(hIcon);
+			}
+			break;
+		case WM_QUIT:
+			// If icon exists destroy it
+			if(hIcon)	
+			{
+				Shell_NotifyIcon(NIM_DELETE, &tnd);
+				DestroyMenu(hMenu);
+				DestroyIcon(hIcon);
+			}
+			break;
 
-
-			default:
+		default:
 
 				if(message == s_uTaskbarRestart)
 				{
