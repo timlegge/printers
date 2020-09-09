@@ -12,7 +12,7 @@ Printers was originally licensed under the terms of the GPL 2.0+.  As I no longe
 To be clear you may use the code under the terms of either license.  I hope you choose to release the code should you choose MIT but if I cared too much about that I would work on it myself.
 
 ## Code Repo
-###html
+### html
 This was the original webpage on source forge and not required here.
 
 ### TrayIcon
