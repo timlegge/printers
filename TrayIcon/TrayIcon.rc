@@ -58,14 +58,14 @@ FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,99,116,50,14
     ICON            ID_MYICON,IDC_STATIC0,7,7,21,20
-    LTEXT           "Tray Icon Application\n\nCopyright (C) 1998, 2002 Timothy Legge",
+    LTEXT           "Tray Icon Application\n\nCopyright (C) 1998 - 2020 Timothy Legge",
                     IDC_STATIC1,33,7,139,29
     PUSHBUTTON      "Details",IDC_DETAILS,34,116,50,14
-    LTEXT           "This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.",
+    LTEXT           "This program is free software; you can redistribute it and/or modify it under the terms of the MIT license or the terms of the GPL-2.0-or-later (at your option).",
                     IDC_STATIC2,33,61,141,49
-    CONTROL         "timlegge@users.sourceforge.net",IDC_EMAIL,"HoverText",
+    CONTROL         "timlegge@gmail.com",IDC_EMAIL,"HoverText",
                     WS_TABSTOP,33,35,120,11
-    CONTROL         "http://printers.sourceforge.net",IDC_WEB,"HoverText",
+    CONTROL         "https://github.com/timlegge/printers",IDC_WEB,"HoverText",
                     WS_TABSTOP,33,47,120,11
 END
 
@@ -93,12 +93,12 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "This applet runs in the Windows 95/98 and NT 4.0 system tray.  It is subject to the terms of the GNU General Public License.\0"
+            VALUE "Comments", "This applet runs in the Windows 95/98 and NT 4.0 system tray and allows you to easily change the default printer.  It is subject to the terms of the MIT or GPL-2.0-or-later (at your option).\0"
             VALUE "CompanyName", "Timothy Legge\0"
             VALUE "FileDescription", "TrayIcon\0"
             VALUE "FileVersion", "1, 0, 0, 0\0"
             VALUE "InternalName", "TrayIcon\0"
-            VALUE "LegalCopyright", "Timothy Legge Copyright © 1998, 2002\0"
+            VALUE "LegalCopyright", "Timothy Legge Copyright © 1998 - 2020\0"
             VALUE "OriginalFilename", "TrayIcon.exe\0"
             VALUE "ProductName", "TrayIcon\0"
             VALUE "ProductVersion", "1, 0, 0, 0\0"
@@ -153,7 +153,7 @@ IDC_LINK                CURSOR  DISCARDABLE     "Hlink.cur"
 
 STRINGTABLE DISCARDABLE 
 BEGIN
-    IDS_DETAILS             "** Tray Icon Application **\n\nShell Tray Icon Application that can be used\nto create real tray applications\n\nCopyright (C) 1998, 2002 Timothy Legge\n\nThis program is free software; you can redistribute it and/or modify\nit under the terms of the GNU General Public License as published by\nthe Free Software Foundation; either version 2 of the License, or\n(at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n\nContact Information:\n\n  Timothy Legge\n  Moncton, NB\n  Canada\n\n  tlegge@rogers.net\n"
+    IDS_DETAILS             "** Tray Icon Application **\n\nShell Tray Icon Application that can be used\nto create real tray applications\n\nCopyright (C) 1998 - 2020 Timothy Legge\n\nThis program is free software; you can redistribute it and/or modify\r\n it under the terms of the MIT license or the terms of the GPL-2.0-or-later (at your option).\n\nContact Information:\n\n  Timothy Legge\n  Moncton, NB\n  Canada\n\n  timlegge@gmail.com\n"
 END
 
 #endif    // English (U.S.) resources

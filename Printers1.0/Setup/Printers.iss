@@ -12,7 +12,7 @@ DefaultDirName={pf}\Printers
 DefaultGroupName=Printers
 AllowNoIcons=true
 AlwaysCreateUninstallIcon=true
-LicenseFile=C:\Printers\Printers1.0\gpl.txt
+LicenseFile=C:\Printers\Printers1.0\LICENSE.md
 MinVersion=4.0.950,4.0.1381sp4
 AppCopyright=Timothy Legge
 OutputDir=C:\Printers\Printers1.0\Setup\Output
@@ -22,7 +22,7 @@ AppVersion=1.1
 
 [Files]
 Source: C:\Printers\Printers1.0\Release\Printers.exe; DestDir: {app}; CopyMode: alwaysoverwrite
-Source: C:\Printers\Printers1.0\gpl.txt; DestDir: {app}; CopyMode: alwaysoverwrite
+Source: C:\Printers\Printers1.0\LICENSE.md; DestDir: {app}; CopyMode: alwaysoverwrite
 
 [INI]
 Filename: {app}\Printers.url; Section: InternetShortcut; Key: URL; String: http://printers.sourceforge.net/

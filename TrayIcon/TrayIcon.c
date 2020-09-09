@@ -4,29 +4,16 @@
 Tray Icon Application shell that can be used to create
 a real tray application
 
-Copyright (C) 1998, 2002 Timothy Legge
-Please see copying.txt for additional information
+Copyright (C) 1998 - 2020 Timothy Legge
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+Licensed under MIT or GPL-2.0-or-later
 
 Contact Information:
 
   Timothy Legge
   Moncton, NB
 
-  tlegge@rogers.com
+  timlegge@gmail.com
 
 $Revision$
 $Author$
@@ -245,7 +232,7 @@ LRESULT CALLBACK WindowFunc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
 			if(result != 0)
 				MessageBox(
 				HWND_DESKTOP,
-				"Error clicking menu item\nReport to tlegge@rogers.com\n(ModifyINI)",
+				"Error clicking menu item\nReport to timlegge@gmail.com\n(ModifyINI)",
 				"TrayIcon Application", MB_OK);
 			return 0;
 		}
